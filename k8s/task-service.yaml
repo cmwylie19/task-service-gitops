@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: task-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: task-service
+  name: task-service
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: task-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: task-service
+    spec:
+      containers:
+        - image: docker.io/cmwylie19/task-service:latest
+          name: task-service
+          ports:
+            - containerPort: 8080
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-service
+  namespace: default
+  labels:
+    service: task-service
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: task-service
