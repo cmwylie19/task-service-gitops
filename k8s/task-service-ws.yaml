@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ws-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ws-test
+  name: ws-test
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: ws-test
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ws-test
+    spec:
+      containers:
+        - image: docker.io/cmwylie19/ws-test:latest
+          name: ws-test
+          ports:
+            - containerPort: 8080
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ws-test
+  namespace: default
+  labels:
+    service: ws-test
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: ws-test
